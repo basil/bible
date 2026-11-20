@@ -4,7 +4,11 @@ label it prints before a chapter's number, the margin origins of the notes
 without their chapter, the notes set below the text (scripture's by
 edition/margin.json, the front and back matter's long notes by rule), and
 the Greek and Hebrew tagged for their fonts. Only the form of what prints
-changes here, never its substance."""
+changes here, never its substance.
+
+The scripture books are also written as plain USFM, for other readers: the
+same view, with its chapter labels, its notes' origins as the book prints
+them, and a caller for every note, without anything PTXprint alone needs."""
 
 from __future__ import annotations
 
@@ -391,6 +395,32 @@ def grouped(
             ]
             result.append((units[0][0], usj.document([book, *divisions])))
     return result
+
+
+def plain(edition: Edition) -> list[tuple[str, str]]:
+    """The scripture books as plain USFM, by code, in the edition's order:
+    the view the book prints, with its chapter label where the manifest asks
+    for one, each note's origin whole under the label its verse prints, every
+    note marked in the text by a caller the reader supplies, since no margin
+    stands beside it, and nothing PTXprint alone needs. A note the book sets
+    below the text to relieve a page stays at its own words, as every other."""
+
+    def marked(note: Node) -> Node:
+        return {**note, "caller": "+"} if note.get("caller") == "-" else note
+
+    return [
+        (
+            code,
+            usj.serialize(
+                labelled(
+                    with_printed_origins(scripture.map_notes(doc, marked)),
+                    edition.policy.unit(code),
+                )
+            ),
+        )
+        for code, doc in pipeline.view(edition, "pdf")
+        if code in edition.scripture
+    ]
 
 
 def export(edition: Edition, mode: str) -> list[tuple[str, str]]:

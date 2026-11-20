@@ -1,10 +1,15 @@
-"""Publishing a checked PDF to dist/."""
+"""Publishing a checked PDF, or the books as USFM, to dist/."""
 
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
+import tempfile
+import zipfile
+from collections.abc import Iterator, Sequence
+from contextlib import contextmanager
 from pathlib import Path
 
 from bible import paths
@@ -47,11 +52,44 @@ def label_pages(pdf: Path, base: Path) -> Path:
     return labelled
 
 
+@contextmanager
+def staged(target: Path) -> Iterator[Path]:
+    """A file of its own beside the target, readable by all, that atomically
+    replaces the target once written, so that runs that overlap never expose
+    each other's partial copies, and that is removed if writing it fails."""
+    target.parent.mkdir(exist_ok=True)
+    handle, name = tempfile.mkstemp(dir=target.parent, prefix=f".{target.name}.")
+    os.close(handle)
+    path = Path(name)
+    try:
+        yield path
+        path.chmod(0o644)
+        path.replace(target)
+    except BaseException:
+        path.unlink(missing_ok=True)
+        raise
+    print("Wrote", target, flush=True)
+
+
 def publish(mode: str, pdf: Path) -> None:
     """Stage a checked PDF and atomically replace the published copy."""
-    target = paths.DIST_DIR / paths.OUTPUTS[mode]
-    paths.DIST_DIR.mkdir(exist_ok=True)
-    staged_pdf = target.with_suffix(".pdf.tmp")
-    shutil.copyfile(pdf, staged_pdf)
-    staged_pdf.replace(target)
-    print("Wrote", target, flush=True)
+    with staged(paths.DIST_DIR / paths.OUTPUTS[mode]) as path:
+        shutil.copyfile(pdf, path)
+
+
+def publish_usfm(books: Sequence[tuple[str, str]]) -> None:
+    """Write the books to a zip, one file to a book numbered in the edition's
+    order (01-GEN.usfm), after the form, not the numbers, of eBible.org's
+    file names, and atomically replace the published copy. Every entry has
+    the same date and is readable by all, so the same books make the same
+    zip."""
+    with staged(paths.DIST_DIR / paths.USFM_ZIP) as path:
+        with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as archive:
+            for number, (code, text) in enumerate(books, start=1):
+                entry = zipfile.ZipInfo(
+                    f"{number:02d}-{code}.usfm", (1980, 1, 1, 0, 0, 0)
+                )
+                entry.compress_type = zipfile.ZIP_DEFLATED
+                # Without a mode, zipfile writes rw------- (0600).
+                entry.external_attr = 0o644 << 16
+                archive.writestr(entry, text)

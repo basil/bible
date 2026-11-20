@@ -16,6 +16,8 @@ OUTPUTS = {
     "pdf": "bible.pdf",
     "pdf-unfilled": "bible-unfilled.pdf",
 }
+# The scripture books as plain USFM, one file to a book, for other readers.
+USFM_ZIP = "oleb-usfm.zip"
 
 # The container image's pinned tools, and the PTXprint checkout among them.
 OPT = Path("/opt")

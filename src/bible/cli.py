@@ -1,6 +1,6 @@
 """The build's commands: validate the sources and the edition's decisions,
-write the review, or typeset the sample or the full Bible, check it, and
-publish it."""
+write the review, write the books as USFM, or typeset the sample or the full
+Bible, check it, and publish it."""
 
 from __future__ import annotations
 
@@ -14,13 +14,13 @@ from contextlib import nullcontext
 
 from bible import export, fill, paths, pipeline, policy, sources, usj, web
 from bible.project import write_project
-from bible.publish import label_pages, publish
+from bible.publish import label_pages, publish, publish_usfm
 from bible.review import review
 from bible.toolchain import check_image
 from bible.typeset import typeset
 from bible.verify import check_processed, inspect_pdf
 
-COMMANDS = ("validate", "review", "web", *paths.OUTPUTS)
+COMMANDS = ("validate", "review", "web", "usfm", *paths.OUTPUTS)
 
 
 def prepared() -> pipeline.Edition:
@@ -110,6 +110,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             validate()
         elif args.command == "review":
             review(prepared())
+        elif args.command == "usfm":
+            check_image()
+            publish_usfm(export.plain(prepared()))
         elif args.command == "web":
             check_image()
             web.write(prepared(), paths.WEB_DIR)
