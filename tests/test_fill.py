@@ -265,7 +265,7 @@ def test_one_worker_is_refused() -> None:
         cli.main(["pdf", "--jobs", "1"])
 
 
-@pytest.mark.parametrize("failure", ["fill", "typeset", "verify", None])
+@pytest.mark.parametrize("failure", ["fill", "typeset", "verify", "label", None])
 def test_only_publish_after_all_checks(
     project: Path, monkeypatch: pytest.MonkeyPatch, failure: str | None
 ) -> None:
@@ -308,11 +308,16 @@ def test_only_publish_after_all_checks(
         check("verify")
         return 1424
 
+    def label(pdf: Path, base: Path) -> Path:
+        check("label")
+        return pdf
+
     monkeypatch.setattr(cli, "write_project", write)
     monkeypatch.setattr(fill, "run", filling)
     monkeypatch.setattr(cli, "typeset", typeset)
     monkeypatch.setattr(cli, "check_processed", lambda *args: None)
     monkeypatch.setattr(cli, "inspect_pdf", inspect)
+    monkeypatch.setattr(cli, "label_pages", label)
     paths.BUILD_DIR.mkdir()
     if failure:
         with pytest.raises(CheckFailed):
