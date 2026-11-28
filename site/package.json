@@ -11,7 +11,7 @@
     "@types/jsdom": "30.0.0",
     "@types/node": "26.6.11",
     "eslint": "10.15.0",
-    "eslint-config-prettier": "10.1.8",
+    "eslint-config-prettier": "10.1.9",
     "eslint-plugin-vue": "10.12.1",
     "jsdom": "31.0.1",
     "minisearch": "7.2.0",
